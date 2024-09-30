@@ -150,16 +150,25 @@ for message in st.session_state.messages:
 # Function to interact with Groq API
 def groq_chat(user_prompt, model, max_tokens, temp):
     client = Groq(api_key="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")
+    if "chat_memory" not in st.session_state:
+        st.session_state.chat_memory = []
+    if len(st.session_state.chat_memory) == 0:
+        system_message = {
+            "role": "system",
+            "content": "You are a super ai that knows everything and helps people answer their questions/n"
+            "you are vert smart and interactive"
+        }
+        st.session_state.chat_memory.append(system_message)
+    st.session_state.chat_memory.append({"role":"user", "content":user_prompt})
     chat_completion = client.chat.completions.create(
-        messages=[
-            {"role":"system", "content":"Your name is Groq Bot an assignment instance"},
-            {"role": "user", "content": user_prompt}
-        ],
+        messages=st.session_state.chat_memory,
         model=model,
         max_tokens=max_tokens,
         temperature=temp
     )
-    return chat_completion.choices[0].message.content
+    groq_reply = chat_completion.choices[0].message.content
+    st.session_state.chat_memory.append({"role":"assistant", "content":groq_reply})
+    return groq_reply
 
 if user_prompt := st.chat_input("Message Groq Here"):
     st.session_state.messages.append({"role": "user", "content": user_prompt})
