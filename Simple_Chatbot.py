@@ -63,8 +63,7 @@ def find_streamlit_directory():
 def toggle_theme():
     # config_path = os.path.expanduser(os.path.join('~', ".streamlit", "config.toml"))
     config_path = os.path.join(".streamlit", "config.toml")
-    print_current_directory_info()
-    find_streamlit_directory()
+    
     try:
         with open(config_path, "r") as f:
             config = f.read()
